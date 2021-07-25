@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.job }}
+spec:
+  template:
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "postgres"
+                  key: postgresql-password
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configMapMame }}
+                  key: DATABASE_USER
+            - name: POSTGRES_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configMapMame }}
+                  key: DATABASE_NAME
+            - name: POSTGRES_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Values.configMapMame }}
+                  key: DATABASE_HOST
+          command: [ "/bin/sh",  "-c", "python", "manage.py", "migrate " ]
+      restartPolicy: Never
+  backoffLimit: 4
