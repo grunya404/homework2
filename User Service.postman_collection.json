@@ -13,7 +13,103 @@
 					"name": "{user Id}",
 					"item": [
 						{
+							"name": "Create user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.collectionVariables.set(\"userId\",  jsonData.id);",
+											"",
+											"pm.test(\"Status test\", function () {",
+											"    pm.expect(jsonData.id).exist;",
+											"    pm.response.to.have.status(200);",
+											"    ",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"johndoe589\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"bestjohn@doe.com\",\n    \"phone\": \"+71002003040\"\n}"
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user"
+									]
+								},
+								"description": "This can only be done by the logged in user."
+							},
+							"response": [
+								{
+									"name": "successful operation",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"username\": \"johndoe589\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"bestjohn@doe.com\",\n    \"phone\": \"+71002003040\"\n}"
+										},
+										"url": {
+											"raw": "{{baseUrl}}/user",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"user"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								}
+							]
+						},
+						{
 							"name": "find user by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"",
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.test(\"Status test\", function () {",
+											"        pm.expect(jsonData.user).not.eql(\"not found\");",
+											"        pm.response.to.have.status(200);",
+											"    ",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -29,8 +125,8 @@
 									"variable": [
 										{
 											"key": "userId",
-											"value": "-49301856",
-											"description": "(Required) ID of user"
+											"value": "{{userId}}",
+											"description": "{{userId}}"
 										}
 									]
 								},
@@ -107,6 +203,23 @@
 						},
 						{
 							"name": "update User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.test(\"Status test\", function () {",
+											"    if (jsonData.firstName == 'Bill'){",
+											"        pm.response.to.have.status(200);",
+											"    }",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "PUT",
 								"header": [
@@ -117,7 +230,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"firstName\": \"Julie\",\n    \"lastName\": \"Doe\",\n    \"email\": \"bestjohn@doe.com\",\n    \"phone\": \"+71004242424\"\n}"
+									"raw": "{\n    \"firstName\": \"Bill\",\n    \"lastName\": \"Doe\",\n    \"email\": \"bestjohn@doe.com\",\n    \"phone\": \"+71004242424\"\n}"
 								},
 								"url": {
 									"raw": "{{baseUrl}}/user/:userId",
@@ -131,8 +244,8 @@
 									"variable": [
 										{
 											"key": "userId",
-											"value": "-49301856",
-											"description": "(Required) ID of user"
+											"value": "{{userId}}",
+											"description": "{{userId}}"
 										}
 									]
 								},
@@ -217,6 +330,22 @@
 						},
 						{
 							"name": "delete User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"",
+											"var jsonData = JSON.parse(responseBody);",
+											"pm.test(\"Status test\", function () {",
+											"      pm.expect(jsonData.message).eql(\"user delete\");",
+											"        pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
 								"header": [],
@@ -232,7 +361,7 @@
 									"variable": [
 										{
 											"key": "userId",
-											"value": "-49301856",
+											"value": "{{userId}}",
 											"description": "(Required) ID of user"
 										}
 									]
@@ -309,65 +438,6 @@
 							]
 						}
 					]
-				},
-				{
-					"name": "Create user",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"johndoe589\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"bestjohn@doe.com\",\n    \"phone\": \"+71002003040\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/user",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user"
-							]
-						},
-						"description": "This can only be done by the logged in user."
-					},
-					"response": [
-						{
-							"name": "successful operation",
-							"originalRequest": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"username\": \"johndoe589\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"bestjohn@doe.com\",\n    \"phone\": \"+71002003040\"\n}"
-								},
-								"url": {
-									"raw": "{{baseUrl}}/user",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"user"
-									]
-								}
-							},
-							"status": "Internal Server Error",
-							"code": 500,
-							"_postman_previewlanguage": "text",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "text/plain"
-								}
-							],
-							"cookie": [],
-							"body": ""
-						}
-					]
 				}
 			]
 		}
@@ -400,6 +470,14 @@
 		{
 			"key": "1",
 			"value": "userId"
+		},
+		{
+			"key": "1",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
 		}
 	]
 }
